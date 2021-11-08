@@ -5,6 +5,10 @@ const app = express();
 
 const port = process.env.PORT
 
+var cors = require('cors')
+
+ 
+
 app.listen(port, () => {
   console.log(`started server on PORT:${port} `);
 });
@@ -71,8 +75,7 @@ const valid = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-app.use(express.static('./front'))
-
+app.use(cors());
 app.use(express.json());
 app.use(valid);
 
