@@ -1,13 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import 'dotenv/config'
+import cors from 'cors';
 
 const app = express();
 
 const port = process.env.PORT
-
-var cors = require('cors')
-
- 
 
 app.listen(port, () => {
   console.log(`started server on PORT:${port} `);
