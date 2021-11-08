@@ -52,7 +52,7 @@ let users: Array<User> = [
   new User(2, "Maria", 30, "222222222", "teste@teste.com"),
 ];
 users[0].transactions = [new Transaction(0, 'Salário', 15000, 'income')]
-
+users[1].transactions = [new Transaction(1, 'Salário', 10000, 'income')]
 let idUser: number = 3;
 let idTransaction: number = 0;
 
@@ -76,22 +76,13 @@ app.use(express.static('./front'))
 app.use(express.json());
 app.use(valid);
 
-app.get("/api", (req: Request, res: Response, next: NextFunction) => {
-  const p = new Promise((resolve, reject) => {
-    if (Math.random() > 0.5) resolve(1);
-    reject(0);
-    /* setTimeout(resolve, 2000); */
-  });
-  p.then((resolve) => {
-    res.send(`${resolve}`);
-  }).catch(() => {
-    res.status(500).send();
-  });
-
-});
-
 app.get("/user", (req: Request, res: Response, next: NextFunction) => {
-  res.json(users);
+  let allUsers: Array<User>;
+  allUsers = users.map((user) => {
+    const { transactions, ...userSemT } = user;
+    return userSemT;
+  })
+  res.json(allUsers);
 });
 
 app.get("/user/:id", (req: Request, res: Response, next: NextFunction) => {
@@ -99,10 +90,11 @@ app.get("/user/:id", (req: Request, res: Response, next: NextFunction) => {
   let pessoaretornada: User | undefined = users.find(
     (user) => user.id == idBuscado
   );
+
   if(pessoaretornada) {
 	  const { transactions, ...pessoaSemT } = pessoaretornada;
-	  
-	  res.send(pessoaSemT);
+
+	  res.json(pessoaSemT);
   } else {
 	  res.status(404).send('Pessoa não encontrada');
   }
