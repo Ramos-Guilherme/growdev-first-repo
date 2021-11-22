@@ -39,7 +39,8 @@ app.get('/personagem', (req: Request, res: Response, next: NextFunction) => {
     const nomes: Array<any> = personagens.map(personagem => {
       return {
         nome: personagem.name,
-        id: personagem.id
+        id: personagem.id,
+        img: personagem.thumbnail.path
       }
     });
     const objRetorno = {
@@ -56,5 +57,28 @@ app.get('/personagem', (req: Request, res: Response, next: NextFunction) => {
 })
 
 app.get('/personagem/:id', (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  const ts = new Date().getTime().toString();
+  const hash = md5(ts + privateKey + publicKey);
+  axios.get(`${apiUrl}/characters/${id}`, {
+    params: {
+      ts: ts,
+      apikey: publicKey,
+      hash: hash,
+    }
+  }).then(response => {
+    axios.get(response.data.data.results[0].thumbnail.path+'.jpg', {
+      responseType: 'stream',
+      params: {
+        ts: ts,
+        apikey: publicKey,
+        hash: hash,
+      }
+    }).then(response => {
+      response.data.pipe(res)
+      /* res.send('OK') */
+    })
+    
+  })
 
 })
